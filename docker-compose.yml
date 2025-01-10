@@ -12,20 +12,6 @@ services:
     networks:
       - haproxy_network
 
-  web1:
-    image: httpd:alpine
-    container_name: web1
-    restart: always
-    networks:
-      - haproxy_network
-
-  web2:
-    image: httpd:alpine
-    container_name: web2
-    restart: always
-    networks:
-      - haproxy_network
-
 networks:
   haproxy_network:
     external: true
