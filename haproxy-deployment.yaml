@@ -1,0 +1,55 @@
+# HAProxy Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haproxy
+  labels:
+    app: haproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haproxy
+  template:
+    metadata:
+      labels:
+        app: haproxy
+    spec:
+      containers:
+      - name: haproxy
+        image: haproxy:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: haproxy-config
+          mountPath: /usr/local/etc/haproxy/haproxy.cfg
+          subPath: haproxy.cfg
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      restartPolicy: Always
+      volumes:
+      - name: haproxy-config
+        hostPath:
+          path: ./haproxy.cfg
+          type: File
+---
+# HAProxy Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: haproxy-service
+  labels:
+    app: haproxy
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: haproxy
+
